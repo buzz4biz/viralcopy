@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViralCopy — Reels Virais para Sua Marca</title>
+  <style>
+    :root {
+      --bg: #09090f;
+      --surface: #13131f;
+      --surface2: #1c1c2e;
+      --border: #2a2a42;
+      --accent: #8b5cf6;
+      --accent2: #ec4899;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --success: #22c55e;
+      --error: #ef4444;
+      --gradient: linear-gradient(135deg, #8b5cf6, #ec4899);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .header-sub { color: var(--muted); font-size: 0.8rem; }
+    .header-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── Cards / Panels ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Grid ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-2 .full { grid-column: 1 / -1; }
+    @media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Form ── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .hint a { color: var(--accent); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 13px;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.18s;
+      width: 100%;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    input[type="password"] { font-family: monospace; letter-spacing: 2px; }
+    textarea { resize: vertical; min-height: 76px; }
+    select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    /* ── Tag input ── */
+    .tag-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 7px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      min-height: 42px;
+      cursor: text;
+      transition: border-color 0.18s;
+      align-items: center;
+    }
+    .tag-area:focus-within { border-color: var(--accent); }
+    .tag {
+      background: rgba(139, 92, 246, 0.18);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: #c4b5fd;
+      padding: 2px 8px 2px 10px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .tag-x { cursor: pointer; opacity: 0.5; font-size: 1rem; line-height: 1; }
+    .tag-x:hover { opacity: 1; }
+    .tag-input-ghost {
+      border: none;
+      background: none;
+      outline: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      min-width: 130px;
+      flex: 1;
+      padding: 2px 0;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--gradient); color: white; }
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.88;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(139, 92, 246, 0.35);
+    }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 13px;
+      font-size: 0.78rem;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+    .btn-outline {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Spinner ── */
+    .spin {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Status ── */
+    .status {
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .status.show { display: block; }
+    .status.info { background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.3); color: #c4b5fd; }
+    .status.success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: #86efac; }
+    .status.error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 12px;
+      display: none;
+    }
+    .progress-wrap.show { display: block; }
+    .progress-bar {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* ── Results ── */
+    .results-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    /* ── Reel Card ── */
+    .reel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .reel-card:hover {
+      border-color: rgba(139,92,246,.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      width: 100%;
+      background: var(--surface2);
+      overflow: hidden;
+    }
+    .thumb-wrap img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb-placeholder {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--border);
+    }
+    .thumb-views {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .card-body { padding: 14px; }
+
+    .card-author {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .card-author a { color: var(--accent); text-decoration: none; }
+    .card-author a:hover { text-decoration: underline; }
+
+    .card-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .card-stats span { display: flex; align-items: center; gap: 3px; }
+
+    /* ── AI Content ── */
+    .ai-block { margin-bottom: 10px; }
+    .ai-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .description-box {
+      font-size: 0.83rem;
+      color: #94a3b8;
+      line-height: 1.55;
+      font-style: italic;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border-radius: 8px;
+      border-left: 2px solid var(--accent);
+    }
+    .caption-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px;
+    }
+    .caption-text {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 8px;
+      white-space: pre-line;
+    }
+    .hashtags-line { font-size: 0.8rem; color: var(--accent); line-height: 1.5; }
+
+    /* ── Card Actions ── */
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 11px;
+      flex-wrap: wrap;
+    }
+    .card-actions .btn-grow { flex: 1; justify-content: center; }
+
+    /* ── Play overlay ── */
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.35);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .play-overlay:hover { background: rgba(0,0,0,.55); }
+    .play-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.4);
+    }
+
+    /* ── Caption preview ── */
+    .caption-preview {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 6px 0 2px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── Tabs ── */
+    .vc-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .vc-tab {
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .vc-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .vc-tab:hover:not(.active) { color: var(--text); }
+    .vc-tab-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 10px;
+      margin-left: 5px;
+    }
+
+    /* ── Saved icon ── */
+    .btn-saved { color: var(--accent) !important; border-color: var(--accent) !important; }
+
+    /* ── Analysis section inside card ── */
+    .analysis-area { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+
+    /* ── Char counter ── */
+    .char-counter {
+      font-size: 0.7rem;
+      text-align: right;
+      margin-top: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+    .char-counter.warn  { color: var(--warning, #f59e0b); }
+    .char-counter.over  { color: var(--error); font-weight: 700; }
+    .char-counter.ok    { color: var(--muted); }
+
+    /* ── Prompt editor ── */
+    .prompt-panel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .prompt-title { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .prompt-vars {
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .prompt-vars code { color: var(--accent); font-size: 0.72rem; }
+
+    /* ── Download / Canva buttons ── */
+    .btn-canva {
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+    }
+    .btn-canva:hover { background: #6d28d9; }
+    .btn-dl-done { color: var(--success) !important; border-color: var(--success) !important; }
+
+    /* ── Analyzing skeleton ── */
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .analyzing-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pd 1s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pd { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--muted);
+    }
+    .empty .e-icon { font-size: 4rem; display: block; margin-bottom: 16px; }
+    .empty h3 { color: var(--text); font-size: 1.05rem; margin-bottom: 6px; }
+
+    /* ── Collapse ── */
+    .collapsible { overflow: hidden; transition: max-height 0.5s ease; max-height: 9999px; }
+    .collapsible.collapsed { max-height: 0; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 0.88rem;
+      z-index: 9999;
+      transform: translateY(70px);
+      opacity: 0;
+      transition: all 0.28s ease;
+      pointer-events: none;
+    }
+    .toast.on { transform: translateY(0); opacity: 1; }
+    .toast.ok { border-color: var(--success); color: #86efac; }
+
+    /* ── Saved badge ── */
+    .saved-badge {
+      font-size: 0.72rem;
+      color: var(--success);
+      margin-left: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .saved-badge.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">📹 ViralCopy</div>
+    <div class="header-sub">Reels virais → legendas para sua marca</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ── CONFIG PANEL ── -->
+  <div class="panel" id="configPanel">
+    <div class="panel-header">
+      <div class="panel-title">
+        ⚙️ Configurações
+        <span class="saved-badge" id="savedBadge">✓ salvo</span>
+      </div>
+      <button class="btn btn-ghost" onclick="toggleConfig()" id="configToggle">Minimizar</button>
+    </div>
+
+    <div class="collapsible" id="configBody">
+      <div class="grid-2">
+
+        <div class="field">
+          <label>🔑 Token Apify</label>
+          <input type="password" id="apifyToken" placeholder="apify_api_xxxxxxxx"
+                 oninput="debounceSave()" autocomplete="off">
+          <span class="hint">Obtenha em <a href="https://console.apify.com/account/integrations" target="_blank">console.apify.com</a></span>
+        </div>
+
+        <div class="field">
+          <label>🤖 Chave API Gemini</label>
+          <input type="password" id="geminiKey" placeholder="AIzaSy..."
+                 oninput="debounceSave()" autocomplete="off">
+          <span class="hint">Obtenha em <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></span>
+        </div>
+
+        <div class="field">
+          <label>🐋 Chave API DeepSeek <span style="font-size:0.75rem;color:var(--muted);font-weight:400">(necessário se escolher DeepSeek acima)</span></label>
+          <input type="password" id="deepseekKey" placeholder="sk-..."
+                 oninput="debounceSave()" autocomplete="off">
+          <span class="hint">Obtenha em <a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a> — é necessário adicionar créditos para usar a API</span>
+        </div>
+
+        <div class="field">
+          <label>🏷️ Nome da Marca</label>
+          <input type="text" id="brandName" placeholder="Ex: Studio Bianca"
+                 oninput="debounceSave()">
+        </div>
+
+        <div class="field">
+          <label>🎙️ Tom de Voz</label>
+          <select id="brandTone" onchange="debounceSave()">
+            <option value="casual e divertido">Casual e divertido</option>
+            <option value="profissional e confiante">Profissional e confiante</option>
+            <option value="inspiracional e motivacional">Inspiracional e motivacional</option>
+            <option value="educativo e informativo">Educativo e informativo</option>
+            <option value="luxuoso e sofisticado">Luxuoso e sofisticado</option>
+            <option value="próximo e empático">Próximo e empático</option>
+            <option value="ousado e provocativo">Ousado e provocativo</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>📝 Descrição da Marca</label>
+          <textarea id="brandDescription"
+                    placeholder="Descreva sua marca: o que você vende ou oferece, seus valores, diferenciais, o que te torna único..."
+                    oninput="debounceSave()"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>👥 Público-Alvo</label>
+          <input type="text" id="brandAudience"
+                 placeholder="Ex: Mulheres 25-40 anos, interessadas em moda sustentável e lifestyle saudável"
+                 oninput="debounceSave()">
+        </div>
+
+        <div class="field full">
+          <label>📣 CTA (Call to Action)</label>
+          <input type="text" id="brandCta"
+                 placeholder="Ex: Siga nosso perfil para mais conteúdo como esse! 👆"
+                 oninput="debounceSave()">
+          <span class="hint">Será inserido no final de cada legenda gerada.</span>
+        </div>
+
+        <div class="field" style="width:160px">
+          <label>✍️ Limite de caracteres da legenda</label>
+          <input type="number" id="captionLimit" value="2000" min="100" max="2200" step="50"
+                 oninput="debounceSave()">
+          <span class="hint">Máx. do Instagram: 2.200</span>
+        </div>
+
+        <div class="field full">
+          <label>🎭 ID do Ator Apify <span style="font-weight:400;text-transform:none;letter-spacing:0">(avançado)</span></label>
+          <input type="text" id="apifyActorId" placeholder="apify~instagram-reel-scraper"
+                 oninput="debounceSave()">
+          <span class="hint">Padrão: <code style="color:var(--accent)">apify~instagram-hashtag-scraper</code> — encontre outros atores em <a href="https://apify.com/store" target="_blank">apify.com/store</a></span>
+        </div>
+
+        <!-- System prompt editor -->
+        <div class="full">
+          <div class="prompt-panel">
+            <div class="prompt-header">
+              <span class="prompt-title">🎭 Estilo de Escrita — System Prompt</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost" style="font-size:0.73rem;padding:4px 10px"
+                        onclick="toggleSystemPrompt()">
+                  <span id="sysPromptToggleLabel">Expandir</span>
+                </button>
+                <button class="btn btn-ghost" style="font-size:0.73rem;padding:4px 10px;color:var(--muted)"
+                        onclick="resetSystemPrompt()">
+                  Resetar
+                </button>
+              </div>
+            </div>
+            <div class="collapsible collapsed" id="sysPromptEditorBody">
+              <textarea id="systemPrompt" rows="20"
+                        style="font-family:monospace;font-size:0.75rem;line-height:1.6;resize:vertical"
+                        oninput="debounceSave()" placeholder="Carregando..."></textarea>
+              <div class="prompt-vars" style="margin-top:8px">
+                Instruções de personalidade e estilo enviadas como <strong style="color:var(--text)">System Instruction</strong> ao Gemini — definem a voz e o estilo de todas as legendas geradas.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt editor -->
+        <div class="full">
+          <div class="prompt-panel">
+            <div class="prompt-header">
+              <span class="prompt-title">🤖 Prompt de IA — estrutura da análise</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost" style="font-size:0.73rem;padding:4px 10px"
+                        onclick="togglePromptEditor()">
+                  <span id="promptToggleLabel">Expandir</span>
+                </button>
+                <button class="btn btn-ghost" style="font-size:0.73rem;padding:4px 10px;color:var(--muted)"
+                        onclick="resetPrompt()">
+                  Resetar
+                </button>
+              </div>
+            </div>
+            <div class="collapsible collapsed" id="promptEditorBody">
+              <textarea id="promptTemplate" rows="18"
+                        style="font-family:monospace;font-size:0.78rem;line-height:1.6;resize:vertical"
+                        oninput="debounceSave()" placeholder="Carregando..."></textarea>
+              <div class="prompt-vars">
+                <strong style="color:var(--text)">Variáveis disponíveis (substituídas automaticamente):</strong><br>
+                <code>{{brand_name}}</code> Nome da marca &nbsp;·&nbsp;
+                <code>{{brand_desc}}</code> Descrição &nbsp;·&nbsp;
+                <code>{{brand_tone}}</code> Tom de voz &nbsp;·&nbsp;
+                <code>{{brand_audience}}</code> Público-alvo &nbsp;·&nbsp;
+                <code>{{cta}}</code> CTA &nbsp;·&nbsp;
+                <code>{{char_limit}}</code> Limite de caracteres<br>
+                <code>{{original_caption}}</code> Legenda original &nbsp;·&nbsp;
+                <code>{{reel_hashtags}}</code> Hashtags do reel &nbsp;·&nbsp;
+                <code>{{views}}</code> Views &nbsp;·&nbsp;
+                <code>{{likes}}</code> Curtidas &nbsp;·&nbsp;
+                <code>{{username}}</code> Criador<br>
+                <code>{{visual_context}}</code> Contexto visual (auto) &nbsp;·&nbsp;
+                <code>{{instrucao_descricao}}</code> Instrução de descrição (auto)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:8px">
+          <label>✍️ Modelo para gerar legenda</label>
+          <select id="captionModel" onchange="debounceSave()">
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+            <option value="deepseek">DeepSeek</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SEARCH PANEL ── -->
+  <div class="panel">
+    <div class="panel-header" style="margin-bottom:14px">
+      <div class="panel-title">🔍 Buscar Reels Virais</div>
+    </div>
+
+    <div class="field" style="margin-bottom:12px">
+      <label>Hashtags (pressione Enter ou vírgula para adicionar)</label>
+      <div class="tag-area" id="tagArea" onclick="document.getElementById('tagGhost').focus()">
+        <input id="tagGhost" class="tag-input-ghost"
+               placeholder="#marketing #viral #tendência"
+               onkeydown="onTagKey(event)"
+               onpaste="onTagPaste(event)">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-bottom:14px">
+      <div class="field" style="flex:1; min-width:140px">
+        <label>Mín. visualizações</label>
+        <input type="number" id="minViews" value="10000" min="0" step="1000">
+      </div>
+      <div class="field" style="width:120px">
+        <label>Qtd. de Reels</label>
+        <input type="number" id="maxResults" value="8" min="1" max="20">
+      </div>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+
+    <div style="margin-top:14px">
+      <button class="btn btn-primary" id="searchBtn" onclick="startSearch()">
+        🔍 Buscar Reels
+      </button>
+    </div>
+  </div>
+
+  <!-- ── STATUS ── -->
+  <div class="status" id="statusBar"></div>
+
+  <!-- ── TABS ── -->
+  <div class="vc-tabs" id="vcTabs" style="display:none">
+    <button class="vc-tab active" id="tabResults" onclick="showTab('results')">
+      Resultados <span class="vc-tab-badge" id="badgeResults">0</span>
+    </button>
+    <button class="vc-tab" id="tabSaved" onclick="showTab('saved')">
+      Salvos <span class="vc-tab-badge" id="badgeSaved" style="background:var(--muted)">0</span>
+    </button>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div id="resultsSection">
+    <div class="empty">
+      <span class="e-icon">🎬</span>
+      <h3>Nenhum resultado ainda</h3>
+      <p>Configure suas credenciais, adicione hashtags e clique em buscar.</p>
+    </div>
+  </div>
+
+  <!-- ── SAVED ── -->
+  <div id="savedSection" style="display:none"></div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  Default prompt template
+// ══════════════════════════════════════════════
+const DEFAULT_PROMPT =
+`Você é especialista em marketing de conteúdo e legendas virais para redes sociais.
+
+Analise este Reel viral do Instagram e crie uma legenda de marca.
+
+CONTEXTO VISUAL:
+{{visual_context}}
+
+METADADOS DO REEL:
+- Legenda original: "{{original_caption}}"
+- Hashtags originais: {{reel_hashtags}}
+- Visualizações: {{views}}
+- Curtidas: {{likes}}
+- Criador: @{{username}}
+
+DADOS DA MARCA:
+- Nome: {{brand_name}}
+- Descrição: {{brand_desc}}
+- Tom de voz: {{brand_tone}}
+- Público-alvo: {{brand_audience}}
+
+Responda EXATAMENTE neste formato, sem adicionar mais nada:
+
+DESCRIÇÃO:
+[{{instrucao_descricao}}]
+
+LEGENDA:
+[Legenda criativa com aproximadamente {{char_limit}} caracteres (obrigatório: use o máximo possível, nunca menos que 80% de {{char_limit}} caracteres). Conecta o tema viral com a marca {{brand_name}} de forma natural e autêntica. Tom: {{brand_tone}}. Não mencione o Reel explicitamente — use o tema como gancho. Termine com este CTA: {{cta}}. FORMATAÇÃO OBRIGATÓRIA: separe cada frase com uma linha vazia (dois quebras de linha: \n\n). Nunca escreva duas frases seguidas na mesma linha.]
+
+HASHTAGS:
+[6-8 hashtags separadas por espaço, misturando populares e de nicho, relacionadas ao tema E à marca]`;
+
+const DEFAULT_SYSTEM_PROMPT = `WRITING STYLE INSTRUCTIONS
+
+TONE & PERSONALITY
+The tone must be intellectually rigorous, poetic, and incisive, yet remain warm and human. Balance authority and expertise with vulnerability and empathy. Avoid didacticism, condescension, or sterile neutrality. Cultivate a voice that is personally involved (implicado), honest, and unafraid to confront discomfort — inviting the reader into shared reflection and subjective implication.
+
+The writing should exude a refined sensibility, combining clinical sharpness with literary elegance. Be courageous in naming contradictions and exposing illusions, but always with a compassionate, non-judgmental undertone. Irony is welcome, but subtle — never cynical or dismissive. The personality is that of a seasoned analyst who is also a fellow human: fallible, curious, and deeply engaged with the complexities of contemporary life.
+
+LANGUAGE STYLE
+Maintain high formality in structure and vocabulary, but avoid academic jargon for its own sake. Language should be accessible to an educated lay audience, yet never simplistic or reductive.
+
+Employ psychoanalytic and philosophical terminology where it illuminates the subject, but always translate or contextualize these concepts through concrete, relatable examples and metaphors.
+
+The style is dialogical and evocative — inviting the reader into co-reflection rather than delivering prescriptive solutions. Writing should feel like an intimate, challenging conversation, not a lecture or self-help manual.
+
+SENTENCE STRUCTURE
+Alternate intentionally between short, impactful sentences and longer, more contemplative, subordinate-rich periods. Use short sentences for emotional punches or unsettling truths; use longer sentences to develop complex ideas.
+
+Employ expressive punctuation: ellipses for hesitation or open-endedness, colons for revelations, parentheses for asides or whispered ironies. These devices enhance the oral, intimate quality of the text.
+
+VOCABULARY
+Use visceral, sensory, and corporeal language to ground abstract concepts in lived experience (e.g., "desabamento," "ruínas," "container," "custo invisível," "encomenda afetiva").
+
+Integrate psychoanalytic and philosophical terms (e.g., "identificação projetiva," "adolescência interminável," "lógica do condomínio") but always anchor them in concrete, everyday scenarios.
+
+Avoid motivational clichés, empty self-help jargon, and language that promises quick fixes. Steer clear of infantilizing, sentimental, or excessively optimistic expressions.
+
+POINT OF VIEW
+Use third person for general analysis, but shift to second person ("você") when directly implicating or challenging the reader. First person ("eu") may be used sparingly to model vulnerability. The text should oscillate between a distanced analytical gaze and a direct implicating address.
+
+CONTENT APPROACH
+Opening: Begin with a provocative hook — an unsettling question, paradox, or assertion that confronts the reader with a latent conflict or contradiction.
+
+Development: Move from a relatable vignette or shared cultural sentiment (micro) to broader theoretical or social analysis (macro), then return to the reader's intimate, subjective position.
+
+Turning Point: Include a moment of "retificação subjetiva" — a reversal that challenges the reader's initial identification or sense of victimhood, inviting recognition of their own complicity or responsibility.
+
+Theoretical Integration: Seamlessly weave in psychoanalytic and philosophical concepts, always contextualized through concrete examples or metaphors.
+
+Closure: End with an open question, a clinical suggestion, or a poetic suspension — never with a moralizing conclusion or comforting synthesis. Leave the reader in productive discomfort, with something to metabolize beyond the text.
+
+BRAND PERSONALITY TRAITS
+Implicated: personally involved, never neutral or detached.
+Courageous: willing to name discomforts, contradictions, and illusions without flinching.
+Poetic: language aesthetically refined, employing metaphor, rhythm, and imagery.
+Ethically Rigorous: committed to truth, responsibility, and the dignity of the subject.
+Critical and Subversive: challenge cultural clichés, therapeutic jargon, and the commodification of suffering.
+Warmly Human: accessible, compassionate, and recognizably human — never cold, arrogant, or inaccessible.
+Ironically Self-Aware: use irony to deflate grandiosity and sentimentalism with a light, self-reflexive touch.
+
+Every text should function as both a mirror and a scalpel — reflecting the reader's experience while cutting through defenses and illusions. The ultimate aim is not to comfort, but to mobilize: to transform silent suffering into living, implicated writing that continues to resonate long after the screen is turned off.`;
+
+// Prompt específico para DeepSeek — não pede DESCRIÇÃO (ela já é o input)
+const DEEPSEEK_PROMPT =
+`Com base na análise abaixo de um Reel viral, escreva uma legenda de Instagram para a marca.
+
+ANÁLISE DO REEL:
+{{visual_context}}
+
+DADOS DA MARCA:
+- Nome: {{brand_name}}
+- Descrição: {{brand_desc}}
+- Tom de voz: {{brand_tone}}
+- Público-alvo: {{brand_audience}}
+
+INSTRUÇÕES:
+Responda EXATAMENTE neste formato, sem texto antes ou depois:
+
+LEGENDA:
+[Legenda com aproximadamente {{char_limit}} caracteres — nunca menos que 80% desse valor. Conecte o tema do Reel com a marca {{brand_name}} de forma natural e autêntica. Tom: {{brand_tone}}. Use o público-alvo como referência: {{brand_audience}}. Não mencione o Reel explicitamente — use o tema como gancho. Termine obrigatoriamente com: {{cta}}. FORMATAÇÃO OBRIGATÓRIA: separe cada frase com uma linha vazia (dois enters). Nunca escreva duas frases seguidas sem linha vazia entre elas.]
+
+HASHTAGS:
+[6 a 8 hashtags com # separadas por espaço, misturando populares e de nicho, relacionadas ao tema e à marca]`;
+
+// ══════════════════════════════════════════════
+//  State
+// ══════════════════════════════════════════════
+let tags = [];
+let configOpen = true;
+let saveTimer = null;
+let promptEditorOpen = false;
+
+// ══════════════════════════════════════════════
+//  Init — load saved config
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Populate prompt editor with default before loading saved
+  el('promptTemplate').value = DEFAULT_PROMPT;
+  el('systemPrompt').value = DEFAULT_SYSTEM_PROMPT;
+
+  try {
+    const c = JSON.parse(localStorage.getItem('vc_cfg') || '{}');
+    if (c.apifyToken)    el('apifyToken').value    = c.apifyToken;
+    if (c.geminiKey)     el('geminiKey').value     = c.geminiKey;
+    if (c.deepseekKey)   el('deepseekKey').value   = c.deepseekKey;
+    if (c.captionModel)  el('captionModel').value  = c.captionModel;
+    if (c.brandName)     el('brandName').value     = c.brandName;
+    if (c.brandDescription) el('brandDescription').value = c.brandDescription;
+    if (c.brandTone)     el('brandTone').value     = c.brandTone;
+    if (c.brandAudience) el('brandAudience').value = c.brandAudience;
+    if (c.apifyActorId)  el('apifyActorId').value  = c.apifyActorId;
+    if (c.brandCta)      el('brandCta').value      = c.brandCta;
+    if (c.captionLimit)  el('captionLimit').value  = c.captionLimit;
+    if (c.promptTemplate) el('promptTemplate').value = c.promptTemplate;
+    if (c.systemPrompt) el('systemPrompt').value = c.systemPrompt;
+    if (c.tags && Array.isArray(c.tags)) { tags = c.tags; renderTags(); }
+    if (c.apifyToken && c.geminiKey && c.brandName) {
+      toggleConfig(); // auto-collapse if already set up
+    }
+  } catch(e) {}
+  updateSavedBadge();
+});
+
+function el(id) { return document.getElementById(id); }
+
+// ══════════════════════════════════════════════
+//  Config save (debounced)
+// ══════════════════════════════════════════════
+function debounceSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveConfig, 600);
+}
+
+function saveConfig() {
+  const cfg = {
+    apifyToken:     el('apifyToken').value,
+    geminiKey:      el('geminiKey').value,
+    deepseekKey:    el('deepseekKey').value,
+    captionModel:   el('captionModel').value,
+    brandName:      el('brandName').value,
+    brandDescription: el('brandDescription').value,
+    brandTone:      el('brandTone').value,
+    brandAudience:  el('brandAudience').value,
+    apifyActorId:   el('apifyActorId').value,
+    brandCta:       el('brandCta').value,
+    captionLimit:   el('captionLimit').value,
+    promptTemplate: el('promptTemplate').value,
+    systemPrompt:   el('systemPrompt').value,
+    tags
+  };
+  localStorage.setItem('vc_cfg', JSON.stringify(cfg));
+  const badge = el('savedBadge');
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 2000);
+}
+
+function toggleConfig() {
+  configOpen = !configOpen;
+  el('configBody').classList.toggle('collapsed', !configOpen);
+  el('configToggle').textContent = configOpen ? 'Minimizar' : 'Expandir';
+}
+
+function togglePromptEditor() {
+  promptEditorOpen = !promptEditorOpen;
+  el('promptEditorBody').classList.toggle('collapsed', !promptEditorOpen);
+  el('promptToggleLabel').textContent = promptEditorOpen ? 'Recolher' : 'Expandir';
+}
+
+let sysPromptEditorOpen = false;
+
+function toggleSystemPrompt() {
+  sysPromptEditorOpen = !sysPromptEditorOpen;
+  el('sysPromptEditorBody').classList.toggle('collapsed', !sysPromptEditorOpen);
+  el('sysPromptToggleLabel').textContent = sysPromptEditorOpen ? 'Recolher' : 'Expandir';
+}
+
+function resetSystemPrompt() {
+  if (!confirm('Resetar o estilo de escrita para o padrão? Suas edições serão perdidas.')) return;
+  el('systemPrompt').value = DEFAULT_SYSTEM_PROMPT;
+  debounceSave();
+  toast('🔄 Estilo de escrita resetado para o padrão');
+}
+
+function resetPrompt() {
+  if (!confirm('Resetar o prompt para o padrão? Suas edições serão perdidas.')) return;
+  el('promptTemplate').value = DEFAULT_PROMPT;
+  debounceSave();
+  toast('🔄 Prompt resetado para o padrão');
+}
+
+// ══════════════════════════════════════════════
+//  Tag input
+// ══════════════════════════════════════════════
+function onTagKey(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    addTag(e.target.value);
+    e.target.value = '';
+  } else if (e.key === 'Backspace' && e.target.value === '') {
+    tags.pop();
+    renderTags();
+    debounceSave();
+  }
+}
+
+function onTagPaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  text.split(/[\s,]+/).forEach(t => addTag(t));
+}
+
+function addTag(raw) {
+  let v = raw.trim().replace(/,/g, '');
+  if (!v) return;
+  if (!v.startsWith('#')) v = '#' + v;
+  if (!tags.includes(v)) { tags.push(v); renderTags(); debounceSave(); }
+}
+
+function removeTag(i) {
+  tags.splice(i, 1);
+  renderTags();
+  debounceSave();
+}
+
+function renderTags() {
+  const area = el('tagArea');
+  const ghost = el('tagGhost');
+  Array.from(area.children).forEach(c => { if (c !== ghost) c.remove(); });
+  tags.forEach((t, i) => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.innerHTML = `${t}<span class="tag-x" onclick="removeTag(${i})">×</span>`;
+    area.insertBefore(span, ghost);
+  });
+  ghost.placeholder = tags.length ? '' : '#marketing #viral #tendência';
+}
+
+// ══════════════════════════════════════════════
+//  Status & progress
+// ══════════════════════════════════════════════
+function showStatus(msg, type = 'info') {
+  const s = el('statusBar');
+  s.className = `status show ${type}`;
+  s.innerHTML = msg;
+}
+function clearStatus() {
+  el('statusBar').className = 'status';
+}
+function setProgress(pct) {
+  const w = el('progressWrap');
+  if (pct === null) { w.classList.remove('show'); return; }
+  w.classList.add('show');
+  el('progressBar').style.width = pct + '%';
+}
+function toast(msg, type = 'ok') {
+  const t = el('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} on`;
+  setTimeout(() => t.className = `toast ${type}`, 2400);
+}
+
+// ══════════════════════════════════════════════
+//  Main search flow
+// ══════════════════════════════════════════════
+async function startSearch() {
+  const cfg = {
+    apifyToken:     el('apifyToken').value.trim(),
+    geminiKey:      el('geminiKey').value.trim(),
+    deepseekKey:    el('deepseekKey').value.trim(),
+    captionModel:   el('captionModel').value || 'gemini-2.5-flash',
+    brandName:      el('brandName').value.trim(),
+    brandDesc:      el('brandDescription').value.trim(),
+    brandTone:      el('brandTone').value,
+    brandAud:       el('brandAudience').value.trim(),
+    brandCta:       el('brandCta').value.trim() || 'Siga nosso perfil para mais conteúdo como esse! 👆',
+    captionLimit:   parseInt(el('captionLimit').value) || 2000,
+    promptTemplate: el('promptTemplate').value.trim() || DEFAULT_PROMPT,
+    systemPrompt:   el('systemPrompt').value.trim() || DEFAULT_SYSTEM_PROMPT,
+    actorId:        el('apifyActorId').value.trim() || 'apify~instagram-hashtag-scraper',
+    minViews:       parseInt(el('minViews').value) || 0,
+    maxResults:     Math.min(parseInt(el('maxResults').value) || 8, 20)
+  };
+
+  if (!cfg.apifyToken) return showStatus('❌ Insira seu token do Apify nas configurações.', 'error');
+  if (!cfg.geminiKey)  return showStatus('❌ Insira sua chave API do Gemini nas configurações.', 'error');
+  if (!cfg.brandName)  return showStatus('❌ Insira o nome da sua marca.', 'error');
+  if (!cfg.brandDesc)  return showStatus('❌ Descreva sua marca nas configurações.', 'error');
+  if (tags.length === 0) return showStatus('❌ Adicione pelo menos uma hashtag.', 'error');
+
+  const btn = el('searchBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Buscando Reels...';
+  clearStatus();
+  setProgress(8);
+
+  el('resultsSection').innerHTML =
+    `<div class="analyzing-row"><div class="pulse-dot"></div>Conectando ao Apify e buscando Reels...</div>`;
+
+  try {
+    // ── Step 1: Scrape ──
+    showStatus('🔍 Buscando Reels no Instagram via Apify…', 'info');
+    const raw = await scrapeApify(cfg.apifyToken, cfg.actorId, tags, cfg.maxResults * 3);
+    setProgress(40);
+
+    if (!raw || raw.length === 0) {
+      throw new Error('Nenhum Reel encontrado. Tente outras hashtags ou verifique seu token Apify.');
+    }
+
+    // ── Step 2: Filter only videos/reels, then filter by views ──
+    const isVideo = r => r.type === 'Video' || r.productType === 'clips' || !!videoSrc(r);
+    const videos = raw.filter(isVideo);
+    const reels = videos
+      .filter(r => views(r) >= cfg.minViews)
+      .sort((a, b) => views(b) - views(a))
+      .slice(0, cfg.maxResults);
+
+    if (reels.length === 0) {
+      const total = raw.length;
+      const vidCount = videos.length;
+      throw new Error(
+        vidCount === 0
+          ? `Encontrei ${total} posts, mas nenhum é Reel/vídeo. Tente outras hashtags.`
+          : `Encontrei ${vidCount} Reel(s), mas nenhum atingiu ${cfg.minViews.toLocaleString('pt-BR')} visualizações. ` +
+            `Reduza o mínimo de views.`
+      );
+    }
+
+    const brand = { name: cfg.brandName, desc: cfg.brandDesc, tone: cfg.brandTone, aud: cfg.brandAud };
+
+    // ── Step 3: Store global state & render preview cards ──
+    window.VC = { reels, brand, cfg, analyses: {}, descriptions: {} };
+
+    el('resultsSection').innerHTML =
+      `<div class="results-meta">
+         <span>${reels.length} Reel${reels.length > 1 ? 's' : ''} encontrado${reels.length > 1 ? 's' : ''}</span>
+         <span style="color:var(--muted);font-size:0.78rem">ordenados por views • clique ✨ para gerar legenda</span>
+       </div>
+       <div class="results-grid" id="grid"></div>`;
+    const grid = el('grid');
+    reels.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'reel-card';
+      card.id = `rc${i}`;
+      card.innerHTML = previewCard(r, i);
+      grid.appendChild(card);
+    });
+
+    // Show tabs and update badge
+    el('vcTabs').style.display = 'flex';
+    el('badgeResults').textContent = reels.length;
+    showTab('results');
+
+    setProgress(100);
+    showStatus(`✅ ${reels.length} Reel${reels.length > 1 ? 's' : ''} encontrado${reels.length > 1 ? 's' : ''}! Clique em ✨ Gerar Legenda para gerar legendas.`, 'success');
+    setTimeout(() => { clearStatus(); setProgress(null); }, 5000);
+
+  } catch (err) {
+    console.error(err);
+    const isApifyQuota = err.message?.startsWith('APIFY_QUOTA');
+    const displayMsg = isApifyQuota
+      ? 'Limite mensal gratuito do Apify atingido (equivalente a $5/mês).'
+      : err.message;
+    showStatus(`❌ ${displayMsg}`, 'error');
+    el('resultsSection').innerHTML = isApifyQuota
+      ? `<div class="empty">
+           <span class="e-icon">💳</span>
+           <h3>Limite Apify atingido</h3>
+           <p>Você usou todo o crédito gratuito mensal ($5). Faça upgrade para continuar.</p>
+           <a href="https://apify.com/pricing" target="_blank" rel="noopener"
+              class="btn btn-primary" style="margin-top:12px;display:inline-block">
+             Ver planos do Apify →
+           </a>
+         </div>`
+      : `<div class="empty">
+           <span class="e-icon">😕</span>
+           <h3>Algo deu errado</h3>
+           <p>${displayMsg}</p>
+         </div>`;
+    setProgress(null);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Buscar Reels';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  Apify
+// ══════════════════════════════════════════════
+async function scrapeApify(token, actorId, hashtagList, limit) {
+  const cleanTags = hashtagList.map(t => t.replace(/^#/, ''));
+  const url = `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${token}&timeout=120&memory=256`;
+
+  // Input format for apify~instagram-hashtag-scraper
+  // resultsType: 'reels' = apenas Reels/vídeos (não fotos)
+  const body = {
+    hashtags: cleanTags,
+    resultsType: 'reels',
+    resultsLimit: limit
+  };
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (e) {
+    throw new Error('Falha de conexão com o Apify. Verifique sua internet.');
+  }
+
+  if (res.status === 401) throw new Error('Token Apify inválido. Verifique em console.apify.com > API.');
+  if (res.status === 402) throw new Error('APIFY_QUOTA: Limite mensal do Apify atingido (equivalente a $5 gratuitos).');
+  if (res.status === 404) {
+    throw new Error(
+      `Ator "${actorId}" não encontrado no Apify. ` +
+      `Verifique o ID em apify.com/store ou tente "apify~instagram-hashtag-scraper".`
+    );
+  }
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Erro Apify (${res.status}): ${txt.slice(0, 180)}`);
+  }
+
+  const data = await res.json();
+  const items = Array.isArray(data) ? data : (data.items || data.data || []);
+
+  // Debug: log the first item's keys so we can see the real field names
+  if (items.length > 0) {
+    console.log('[ViralCopy] Apify sample item keys:', Object.keys(items[0]));
+    console.log('[ViralCopy] Apify sample item:', JSON.stringify(items[0], null, 2).slice(0, 2000));
+  }
+
+  return items;
+}
+
+// ══════════════════════════════════════════════
+//  Helpers — field normalisation
+// ══════════════════════════════════════════════
+function views(r) {
+  return r.videoPlayCount   // apify~instagram-hashtag-scraper (official field)
+      || r.igPlayCount      // alternative field same actor
+      || r.videoViewCount   // apify~instagram-scraper v1
+      || r.playCount        // TikTok-style
+      || r.viewsCount       // some actors
+      || r.views            // generic
+      || r.video_view_count // snake_case variant
+      || r.plays            // another variant
+      || (r.metrics && (r.metrics.videoPlayCount || r.metrics.videoViewCount || r.metrics.views || r.metrics.plays))
+      || 0;
+}
+function likes(r) {
+  return r.likesCount || r.likeCount || r.likes || 0;
+}
+function comments(r) {
+  return r.commentsCount || r.commentCount || r.comments || 0;
+}
+function thumb(r) {
+  return r.displayUrl || r.thumbnailSrc || r.thumbnailUrl || r.previewUrl ||
+         r.coverUrl || r.imageUrl || r.thumbnail || null;
+}
+function videoSrc(r) {
+  return r.videoUrl || r.videoSrc || r.video_url || r.mediaUrl ||
+         r.videoUrlNoWatermark || r.downloadUrl || null;
+}
+function caption(r) {
+  return r.caption || r.captionText || r.description || r.text || '';
+}
+function username(r) {
+  return r.ownerUsername || r.username || r.authorUsername || r.author || 'desconhecido';
+}
+function reelUrl(r) {
+  return r.url || r.instagramUrl ||
+         (r.shortCode ? `https://www.instagram.com/reel/${r.shortCode}/` :
+         (r.id ? `https://www.instagram.com/reel/${r.id}/` : '#'));
+}
+function fmt(n) {
+  const num = parseInt(n) || 0;
+  if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+  if (num >= 1e3) return (num / 1e3).toFixed(0) + 'K';
+  return num.toLocaleString('pt-BR');
+}
+
+// ══════════════════════════════════════════════
+//  Video frame extraction
+// ══════════════════════════════════════════════
+
+// Seek a video element to a specific time and resolve when ready
+function seekTo(video, time) {
+  return new Promise(resolve => {
+    const onSeeked = () => { video.removeEventListener('seeked', onSeeked); resolve(); };
+    video.addEventListener('seeked', onSeeked);
+    video.currentTime = time;
+  });
+}
+
+// Load video from URL, extract `numFrames` frames evenly spaced across its duration.
+// Returns array of base64 JPEG strings (may be empty on CORS/network failure).
+async function extractVideoFrames(url, numFrames = 6) {
+  return new Promise(resolve => {
+    const video = document.createElement('video');
+    video.crossOrigin = 'anonymous';
+    video.muted = true;
+    video.preload = 'auto';
+    video.playsInline = true;
+
+    // Abort if it takes too long (CORS block shows up as silent hang)
+    const timer = setTimeout(() => {
+      video.src = '';
+      resolve([]);
+    }, 18000);
+
+    video.addEventListener('error', () => {
+      clearTimeout(timer);
+      resolve([]);
+    });
+
+    video.addEventListener('loadedmetadata', async () => {
+      try {
+        const dur = video.duration;
+        if (!dur || !isFinite(dur) || dur < 0.1) {
+          clearTimeout(timer);
+          resolve([]);
+          return;
+        }
+
+        // Scale down to keep Gemini payload reasonable (max 480px on longest side)
+        const maxDim = 480;
+        const scale = Math.min(1, maxDim / Math.max(video.videoWidth || 480, video.videoHeight || 480));
+        const canvas = document.createElement('canvas');
+        canvas.width  = Math.round((video.videoWidth  || 480) * scale);
+        canvas.height = Math.round((video.videoHeight || 854) * scale);
+        const ctx = canvas.getContext('2d');
+
+        const frames = [];
+        for (let i = 0; i < numFrames; i++) {
+          // Timestamps: 0%, 20%, 40%, 60%, 80%, 100%
+          const t = i === 0 ? 0.05
+                  : i === numFrames - 1 ? dur - 0.05
+                  : (dur * i) / (numFrames - 1);
+          await seekTo(video, Math.max(0.05, Math.min(t, dur - 0.05)));
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          frames.push(canvas.toDataURL('image/jpeg', 0.72).split(',')[1]);
+        }
+
+        clearTimeout(timer);
+        video.src = '';
+        resolve(frames);
+      } catch {
+        clearTimeout(timer);
+        resolve([]);
+      }
+    });
+
+    video.src = url;
+    video.load();
+  });
+}
+
+// Fetch a single image URL as base64 (fallback for when video isn't available)
+async function fetchImageBase64(url) {
+  try {
+    const r = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(8000) });
+    if (!r.ok) return null;
+    const blob = await r.blob();
+    return new Promise(res => {
+      const rd = new FileReader();
+      rd.onload  = () => res(rd.result.split(',')[1]);
+      rd.onerror = () => res(null);
+      rd.readAsDataURL(blob);
+    });
+  } catch { return null; }
+}
+
+// ══════════════════════════════════════════════
+//  Actor 2 — server-side frame extraction
+//  Runs inside Apify's web-scraper (Node.js +
+//  Playwright), bypassing Instagram CDN CORS.
+//  page.screenshot() captures what Chromium
+//  renders at OS level — no tainted-canvas issue.
+// ══════════════════════════════════════════════
+const FRAME_PAGE_FN = `async function pageFunction({ page, request }) {
+  const { videoUrl, reelIdx } = request.userData;
+  if (!videoUrl) return { reelIdx, frames: [] };
+  try {
+    await page.setViewportSize({ width: 480, height: 854 }).catch(() => {});
+    // Load video fullscreen — no crossOrigin attr → loads without CORS restriction
+    const loaded = await page.evaluate((url) => {
+      document.documentElement.style.cssText = 'margin:0;padding:0;background:#000';
+      document.body.style.cssText = 'margin:0;padding:0;background:#000;overflow:hidden';
+      document.body.innerHTML = '<video id="vc" muted playsinline style="position:fixed;top:0;left:0;width:100%;height:100%;object-fit:contain"></video>';
+      const v = document.getElementById('vc');
+      v.src = url;
+      return new Promise((res) => {
+        const t = setTimeout(() => res(false), 22000);
+        v.addEventListener('loadedmetadata', () => { clearTimeout(t); res(true); });
+        v.addEventListener('error', () => { clearTimeout(t); res(false); });
+        v.load();
+      });
+    }, videoUrl);
+    if (!loaded) return { reelIdx, frames: [] };
+    const dur = await page.evaluate(() => document.getElementById('vc').duration);
+    if (!dur || !isFinite(dur) || dur < 0.1) return { reelIdx, frames: [] };
+    const N = 6;
+    const frames = [];
+    for (let i = 0; i < N; i++) {
+      const t = i === 0 ? 0.05 : i === N-1 ? Math.max(0.05, dur-0.05) : (dur*i)/(N-1);
+      await page.evaluate((t) => new Promise(res => {
+        const v = document.getElementById('vc');
+        v.currentTime = t;
+        v.addEventListener('seeked', res, { once: true });
+      }), t);
+      await new Promise(r => setTimeout(r, 280));
+      const buf = await page.screenshot({ type: 'jpeg', quality: 68 });
+      // buf is a Node.js Buffer; convert to base64
+      const b64 = (typeof buf.toString === 'function') ? buf.toString('base64')
+                : btoa(String.fromCharCode(...new Uint8Array(buf)));
+      frames.push(b64);
+    }
+    return { reelIdx, frames };
+  } catch (e) { return { reelIdx, frames: [], error: String(e) }; }
+}`;
+
+async function extractFramesViaApify(token, reels) {
+  const entries = reels
+    .map((r, i) => ({ idx: i, url: videoSrc(r) }))
+    .filter(e => e.url);
+  if (!entries.length) return {};
+
+  // Each reel gets a unique URL so Apify doesn't deduplicate
+  const startUrls = entries.map(e => ({
+    url: `https://example.com/?vc_reel=${e.idx}`,
+    userData: { reelIdx: e.idx, videoUrl: e.url }
+  }));
+
+  let res;
+  try {
+    res = await fetch(
+      `https://api.apify.com/v2/acts/apify~web-scraper/run-sync-get-dataset-items?token=${token}&timeout=240&memory=1024`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          startUrls,
+          maxPagesPerCrawl: startUrls.length,
+          pageFunction: FRAME_PAGE_FN,
+          proxyConfiguration: { useApifyProxy: true }
+        })
+      }
+    );
+  } catch { return {}; }
+
+  if (!res.ok) return {};
+  const raw = await res.json().catch(() => []);
+  const items = Array.isArray(raw) ? raw : (raw.items || []);
+
+  // Build reelIdx → frames[] map
+  const map = {};
+  for (const item of items) {
+    if (item?.reelIdx !== undefined && Array.isArray(item?.frames) && item.frames.length > 0) {
+      map[item.reelIdx] = item.frames;
+    }
+  }
+  return map;
+}
+
+// ══════════════════════════════════════════════
+//  Prompt builder
+// ══════════════════════════════════════════════
+function buildPrompt(template, vars) {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) =>
+    vars[key] !== undefined ? vars[key] : `{{${key}}}`
+  );
+}
+
+// ══════════════════════════════════════════════
+//  Gemini
+// ══════════════════════════════════════════════
+async function analyzeGemini(apiKey, reel, brand, preFrames = [], cfg = {}, model = 'gemini-2.5-flash') {
+  const originalCaption = caption(reel).slice(0, 600);
+  const reelHashtags = (reel.hashtags || []).slice(0, 20).map(h => `#${h}`).join(' ');
+  const v    = fmt(views(reel));
+  const l    = fmt(likes(reel));
+  const user = username(reel);
+  const vUrl = videoSrc(reel);
+
+  // ── Build visual context ──
+  let imageParts = [];
+  let mode = 'text';
+
+  if (vUrl) {
+    imageParts = [{ fileData: { mimeType: 'video/mp4', fileUri: vUrl } }];
+    mode = 'video';
+  } else if (preFrames.length > 0) {
+    imageParts = preFrames.map(b64 => ({ inlineData: { mimeType: 'image/jpeg', data: b64 } }));
+    mode = 'video';
+  } else {
+    const tUrl = thumb(reel);
+    if (tUrl) {
+      const b64 = await fetchImageBase64(tUrl);
+      if (b64) {
+        const mime = tUrl.match(/\.png/i) ? 'image/png' : 'image/jpeg';
+        imageParts = [{ inlineData: { mimeType: mime, data: b64 } }];
+        mode = 'thumb';
+      }
+    }
+  }
+
+  const instrucao_descricao =
+    mode === 'video' && vUrl
+      ? '2-3 frases descrevendo com precisão o que acontece no vídeo (narrativa, personagens, emoção central, por que viralizou). Baseie-se no vídeo — não invente.'
+    : mode === 'video'
+      ? '2-3 frases descrevendo o que acontece ao longo do vídeo com base nos frames em ordem cronológica.'
+    : mode === 'thumb'
+      ? '2-3 frases sobre o tema e emoção do Reel, com base no thumbnail e na legenda original. Não descreva ação que não pode confirmar visualmente.'
+    : '2-3 frases sobre o tema e potencial viral do Reel, baseadas APENAS na legenda e hashtags originais. Não invente descrição visual.';
+
+  const visual_context =
+    mode === 'video' && vUrl ? '- Vídeo completo incluído via URL. Analise todos os momentos.'
+  : mode === 'video'         ? '- 6 frames do vídeo em ordem cronológica incluídos acima.'
+  : mode === 'thumb'         ? '- Thumbnail de capa incluído acima.'
+  :                            '- Sem imagens disponíveis — use apenas os metadados textuais abaixo.';
+
+  const template = cfg.promptTemplate || DEFAULT_PROMPT;
+  const prompt = buildPrompt(template, {
+    brand_name:          brand.name,
+    brand_desc:          brand.desc,
+    brand_tone:          brand.tone,
+    brand_audience:      brand.aud,
+    cta:                 cfg.brandCta || 'Siga nosso perfil para mais conteúdo como esse! 👆',
+    char_limit:          cfg.captionLimit || 2000,
+    original_caption:    originalCaption,
+    reel_hashtags:       reelHashtags || '(não disponíveis)',
+    views:               v,
+    likes:               l,
+    username:            user,
+    visual_context,
+    instrucao_descricao
+  });
+
+  const parts = [...imageParts, { text: prompt }];
+
+  let res;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: cfg.systemPrompt || DEFAULT_SYSTEM_PROMPT }] },
+          contents: [{ parts }],
+          generationConfig: { temperature: 0.85, maxOutputTokens: 4096, topP: 0.9 }
+        })
+      }
+    );
+  } catch (e) {
+    throw new Error('Falha de conexão com a API Gemini.');
+  }
+
+  if (res.status === 400) {
+    const errBody = await res.json().catch(() => ({}));
+    const errMsg  = errBody?.error?.message || '';
+    if (/api.?key|invalid.?key|api_key/i.test(errMsg)) {
+      throw new Error('Chave API Gemini inválida. Verifique nas configurações.');
+    }
+    if (/video|url|fetch|download|access/i.test(errMsg)) {
+      throw new Error('Gemini não conseguiu acessar o vídeo (URL expirada ou bloqueada). Tente outro Reel.');
+    }
+    throw new Error(`Gemini recusou a requisição: ${errMsg.slice(0, 120) || 'erro 400'}`);
+  }
+  if (res.status === 429) throw new Error('RETRYABLE_429: Limite de requisições Gemini atingido.');
+  if (res.status === 503 || res.status === 529) throw new Error('RETRYABLE_503: Gemini sobrecarregado. Tentando novamente em instantes…');
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Gemini (${res.status}): ${txt.slice(0, 120)}`);
+  }
+
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return { ...parseGemini(text), mode };
+}
+
+// ══════════════════════════════════════════════
+//  DeepSeek — escreve a legenda a partir da descrição do Gemini
+// ══════════════════════════════════════════════
+async function writeWithDeepSeek(apiKey, description, brand, cfg) {
+  const prompt = buildPrompt(DEEPSEEK_PROMPT, {
+    visual_context:  description,
+    brand_name:      brand.name,
+    brand_desc:      brand.desc,
+    brand_tone:      brand.tone,
+    brand_audience:  brand.aud,
+    cta:             cfg.brandCta || 'Siga nosso perfil para mais conteúdo como esse! 👆',
+    char_limit:      cfg.captionLimit || 2000
+  });
+
+  let res;
+  try {
+    res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: cfg.systemPrompt || DEFAULT_SYSTEM_PROMPT },
+          { role: 'user',   content: prompt }
+        ],
+        temperature: 0.9,
+        max_tokens: 4096
+      })
+    });
+  } catch (e) {
+    throw new Error('Falha de conexão com a API DeepSeek.');
+  }
+
+  if (res.status === 401) throw new Error('Chave API DeepSeek inválida. Verifique nas configurações.');
+  if (res.status === 402) throw new Error('DEEPSEEK_BALANCE: Saldo DeepSeek insuficiente.');
+  if (res.status === 429) throw new Error('RETRYABLE_429: Limite de requisições DeepSeek atingido.');
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`DeepSeek (${res.status}): ${txt.slice(0, 120)}`);
+  }
+
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content || '';
+  return parseGemini(text); // reutiliza o mesmo parser de seções
+}
+
+// ══════════════════════════════════════════════
+//  Write caption with Gemini (text-only, no video re-analysis)
+// ══════════════════════════════════════════════
+async function writeWithGemini(apiKey, description, brand, cfg, model = 'gemini-2.5-flash') {
+  const prompt = buildPrompt(cfg.promptTemplate || DEFAULT_PROMPT, {
+    visual_context:      description,
+    original_caption:    '',
+    brand_name:          brand.name,
+    brand_desc:          brand.desc,
+    brand_tone:          brand.tone,
+    brand_audience:      brand.aud,
+    cta:                 cfg.brandCta || 'Siga nosso perfil para mais conteúdo como esse! 👆',
+    char_limit:          cfg.captionLimit || 2000,
+    reel_hashtags:       '(não disponíveis)',
+    views: '', likes: '', username: '',
+    instrucao_descricao: 'Resuma em 2-3 frases o tema central do conteúdo acima.'
+  });
+
+  let res;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: cfg.systemPrompt || DEFAULT_SYSTEM_PROMPT }] },
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.9, maxOutputTokens: 4096, topP: 0.9 }
+        })
+      }
+    );
+  } catch (e) {
+    throw new Error('Falha de conexão com a API Gemini.');
+  }
+
+  if (res.status === 400) {
+    const errBody = await res.json().catch(() => ({}));
+    const errMsg  = errBody?.error?.message || '';
+    if (/api.?key|invalid.?key|api_key/i.test(errMsg)) throw new Error('Chave API Gemini inválida. Verifique nas configurações.');
+    throw new Error(`Gemini recusou a requisição: ${errMsg.slice(0, 120) || 'erro 400'}`);
+  }
+  if (res.status === 429) throw new Error('RETRYABLE_429: Limite de requisições Gemini atingido.');
+  if (res.status === 503 || res.status === 529) throw new Error('RETRYABLE_503: Gemini sobrecarregado.');
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Gemini (${res.status}): ${txt.slice(0, 120)}`);
+  }
+
+  const data = await res.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return parseGemini(rawText);
+}
+
+function parseGemini(rawText) {
+  // Normalise: strip markdown bold (**TEXT:** → TEXT:), unify line endings
+  const text = rawText
+    .replace(/\r\n/g, '\n')
+    .replace(/\*\*([^*]+)\*\*/g, '$1');   // **bold** → plain
+
+  // Try to match from `label:` until the next known section header OR end of string
+  const SECTIONS = ['DESCRI[ÇC][ÃA]O', 'LEGENDA', 'HASHTAGS'];
+  const get = (label) => {
+    // Build lookahead from all OTHER section names
+    const others = SECTIONS.filter(s => s !== label).join('|');
+    const pattern = new RegExp(
+      `${label}:\\s*([\\s\\S]+?)(?=\\n+\\s*(?:${others}):|\\s*$)`, 'i'
+    );
+    return (text.match(pattern)?.[1] || '').trim();
+  };
+
+  const description  = get('DESCRI[ÇC][ÃA]O');
+  const rawHashtags  = get('HASHTAGS');
+  const hashtags     = rawHashtags
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .map(w => w.startsWith('#') ? w : '#' + w)
+    .join(' ');
+  const rawCaption  = get('LEGENDA');
+
+  // Last-resort: if nothing parsed, return entire text as caption
+  const caption = formatCaptionSpacing(
+    (!description && !rawCaption && !hashtags) ? rawText.trim() : rawCaption
+  );
+
+  return { description, caption, hashtags };
+}
+
+// Force blank line between every sentence in the caption
+function formatCaptionSpacing(text) {
+  if (!text) return text;
+  return text
+    .replace(/\r\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')                          // colapsa 3+ newlines em 2
+    .replace(/([.!?…])\n(?!\n)/g, '$1\n\n')              // newline simples após frase → duplo
+    .replace(/([.!?…][ \t]+)(?=[^\n])/g, '$1\n\n')       // frase seguida de espaço+texto → quebra
+    .replace(/\n{3,}/g, '\n\n')                          // limpa novamente
+    .trim();
+}
+
+// ══════════════════════════════════════════════
+//  Card renderers
+// ══════════════════════════════════════════════
+function thumbHTML(r) {
+  const t = thumb(r);
+  if (!t) return `<div class="thumb-placeholder">🎬</div>`;
+  return `
+    <img src="${t}" alt="Thumbnail" loading="lazy"
+         onerror="this.parentElement.innerHTML='<div class=\\'thumb-placeholder\\'>🎬</div>'">
+    <div class="thumb-views">👁 ${fmt(views(r))}</div>
+  `;
+}
+
+function skeletonCard(r, step = 'frames') {
+  const onFrames = step === 'frames';
+  return `
+    <div class="thumb-wrap">${thumbHTML(r)}</div>
+    <div class="card-body">
+      <div class="card-author">@${username(r)}</div>
+      <div class="card-stats">
+        <span>❤️ ${fmt(likes(r))}</span>
+        <span>💬 ${fmt(comments(r))}</span>
+      </div>
+      <div class="analyzing-row" style="gap:6px">
+        <div class="pulse-dot" style="${onFrames ? '' : 'background:var(--success);animation:none'}"></div>
+        <span style="${onFrames ? '' : 'opacity:.45;text-decoration:line-through'}">🎞️ Ator 2: extraindo frames…</span>
+        ${!onFrames ? '<span style="color:var(--success);font-size:.8rem;margin-left:2px">✓</span>' : ''}
+      </div>
+      <div class="analyzing-row" style="gap:6px;padding-top:0">
+        <div class="pulse-dot" style="${onFrames ? 'opacity:.25;animation:none' : ''}"></div>
+        <span style="${onFrames ? 'opacity:.35' : ''}">🤖 Gemini: gerando legenda…</span>
+      </div>
+      <div style="height:56px;margin-top:10px" class="skeleton-pulse"></div>
+    </div>
+  `;
+}
+
+// mode: 'video' | 'thumb' | 'text'
+const MODE_BADGE = {
+  video: { icon: '🎬', label: 'vídeo completo', color: 'var(--success)' },
+  thumb: { icon: '🖼️', label: 'thumbnail',      color: 'var(--warning, #f59e0b)' },
+  text:  { icon: '📄', label: 'metadados',       color: 'var(--muted)' }
+};
+
+function fullCard(r, desc, cap, htags, idx, mode = 'text') {
+  const fullText = cap + (htags ? '\n\n' + htags : '');
+  const url = reelUrl(r);
+  const badge = MODE_BADGE[mode] || MODE_BADGE.text;
+  return `
+    <div class="thumb-wrap">${thumbHTML(r)}</div>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="card-author" style="margin:0">
+          <a href="${url}" target="_blank" rel="noopener">@${username(r)}</a>
+        </div>
+        <span title="Base da análise de IA" style="font-size:0.7rem;color:${badge.color};
+              border:1px solid ${badge.color};border-radius:20px;padding:2px 8px;
+              white-space:nowrap;opacity:0.85">
+          ${badge.icon} ${badge.label}
+        </span>
+      </div>
+      <div class="card-stats">
+        <span>❤️ ${fmt(likes(r))}</span>
+        <span>💬 ${fmt(comments(r))}</span>
+      </div>
+
+      ${desc ? `
+      <div class="ai-block">
+        <div class="ai-label">🔍 Sobre o Reel</div>
+        <div class="description-box">${esc(desc)}</div>
+      </div>` : ''}
+
+      <div class="ai-block">
+        <div class="ai-label">✍️ Legenda para sua Marca</div>
+        <div class="caption-box">
+          <div class="caption-text">${esc(cap)}</div>
+          ${htags ? `<div class="hashtags-line">${esc(htags)}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick='copyText(${JSON.stringify(fullText)})'>
+          📋 Copiar
+        </button>
+        <a class="btn btn-outline btn-sm" href="${url}" target="_blank" rel="noopener">
+          📱 Ver Reel
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function errorCard(r, msg) {
+  return `
+    <div class="thumb-wrap">${thumbHTML(r)}</div>
+    <div class="card-body">
+      <div class="card-author">@${username(r)}</div>
+      <div class="status show error" style="margin-top:8px;margin-bottom:0">
+        ⚠️ ${esc(msg)}
+      </div>
+      <div class="card-actions">
+        <a class="btn btn-outline btn-sm" href="${reelUrl(r)}" target="_blank" rel="noopener">
+          📱 Ver Reel
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  Clipboard
+// ══════════════════════════════════════════════
+function copyText(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+      .then(() => toast('✅ Legenda copiada!'))
+      .catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  const ta = Object.assign(document.createElement('textarea'),
+    { value: text, style: 'position:fixed;opacity:0' });
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  toast('✅ Legenda copiada!');
+}
+
+// ══════════════════════════════════════════════
+//  Preview card (new — on-demand analysis)
+// ══════════════════════════════════════════════
+function previewCard(r, idx) {
+  const t    = thumb(r);
+  const vSrc = videoSrc(r);
+  const url  = reelUrl(r);
+  const cap  = caption(r);
+  const saved = isSaved(r);
+
+  const thumbArea = t
+    ? `<img src="${t}" alt="Thumbnail" loading="lazy"
+            onerror="this.parentElement.innerHTML='<div class=\\'thumb-placeholder\\'>🎬</div>'">
+       <div class="thumb-views">👁 ${fmt(views(r))}</div>
+       ${vSrc ? `<div class="play-overlay" onclick="vcPlay(${idx})">
+                   <div class="play-icon">▶</div>
+                 </div>` : ''}`
+    : `<div class="thumb-placeholder">🎬</div>`;
+
+  return `
+    <div class="thumb-wrap" id="tw${idx}" style="position:relative">${thumbArea}</div>
+    ${vSrc ? `
+    <div style="padding:6px 10px 2px;border-bottom:1px solid var(--border)">
+      <button class="btn btn-outline btn-sm btn-grow" id="dlBtn${idx}"
+              onclick="vcDownload(${idx})"
+              style="font-size:0.78rem;gap:5px">
+        ⬇ Baixar vídeo
+      </button>
+    </div>` : ''}
+    <div class="card-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div class="card-author" style="margin:0">
+          <a href="${url}" target="_blank" rel="noopener">@${esc(username(r))}</a>
+        </div>
+      </div>
+      <div class="card-stats">
+        <span>👁 ${fmt(views(r))}</span>
+        <span>❤️ ${fmt(likes(r))}</span>
+        <span>💬 ${fmt(comments(r))}</span>
+      </div>
+      ${cap ? `<div class="caption-preview">${esc(cap.slice(0, 120))}${cap.length > 120 ? '…' : ''}</div>` : ''}
+
+      <div class="card-actions" style="margin-top:10px">
+        <button class="btn btn-outline btn-sm" onclick="vcAnalyzeVideo(${idx})" id="analyzeBtn${idx}">
+          🎬 Analisar
+        </button>
+        <button class="btn btn-outline btn-sm btn-grow" onclick="vcGenerateCaption(${idx})" id="captionBtn${idx}" disabled style="opacity:0.4">
+          ✨ Gerar Legenda
+        </button>
+        <button class="btn btn-outline btn-sm" id="saveBtn${idx}"
+                onclick="vcSave(${idx})"
+                style="${saved ? 'color:var(--accent);border-color:var(--accent)' : ''}">
+          ${saved ? '🔖 Salvo' : '🔖 Salvar'}
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="vcDelete(${idx})" title="Apagar este reel">
+          🗑️
+        </button>
+      </div>
+
+      <div class="analysis-area" id="vcanalysis-${idx}" style="display:none"></div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  On-demand interaction functions
+// ══════════════════════════════════════════════
+
+// Download reel video
+async function vcDownload(idx) {
+  const vc = window.VC;
+  if (!vc || !vc.reels[idx]) return;
+  const btn = document.getElementById(`dlBtn${idx}`);
+  const url = videoSrc(vc.reels[idx]);
+  if (!url) return;
+
+  const user = username(vc.reels[idx]) || 'reel';
+  const filename = `${user}_${idx + 1}.mp4`;
+
+  if (btn) { btn.innerHTML = '<span class="spin"></span> Baixando…'; btn.disabled = true; }
+
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error('fetch_failed');
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    if (btn) { btn.innerHTML = '✅ Baixado'; btn.disabled = false; }
+    setTimeout(() => { if (btn) btn.innerHTML = '⬇ Baixar vídeo'; }, 3000);
+  } catch {
+    // Fallback: abre em nova aba (usuário salva manualmente)
+    window.open(url, '_blank');
+    if (btn) { btn.innerHTML = '⬇ Baixar vídeo'; btn.disabled = false; }
+  }
+}
+
+// Toggle inline video player
+function vcPlay(idx) {
+  const tw = el(`tw${idx}`);
+  if (!tw) return;
+  const vc = window.VC;
+  if (!vc) return;
+  const r = vc.reels[idx];
+  const vSrc = videoSrc(r);
+  if (!vSrc) return;
+
+  // If video already playing → remove and restore thumbnail
+  if (tw.querySelector('video')) {
+    tw.innerHTML = `
+      <img src="${thumb(r)}" alt="Thumbnail" loading="lazy"
+           onerror="this.parentElement.innerHTML='<div class=\\'thumb-placeholder\\'>🎬</div>'">
+      <div class="thumb-views">👁 ${fmt(views(r))}</div>
+      <div class="play-overlay" onclick="vcPlay(${idx})">
+        <div class="play-icon">▶</div>
+      </div>`;
+    return;
+  }
+
+  tw.innerHTML = `
+    <video src="${esc(vSrc)}"
+           controls autoplay playsinline muted
+           style="width:100%;height:100%;object-fit:cover;border-radius:inherit;background:#000"
+           onerror="this.parentElement.innerHTML='<div class=\\'thumb-placeholder\\'>❌ Vídeo indisponível</div>'">
+    </video>`;
+}
+
+// Delete a reel from results
+function vcDelete(idx) {
+  const card = el(`rc${idx}`);
+  if (!card) return;
+  card.style.transition = 'opacity 0.25s, transform 0.25s';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.92)';
+  setTimeout(() => {
+    card.remove();
+    if (window.VC) {
+      window.VC.reels[idx] = null; // mark as deleted (keep indices stable)
+    }
+    // Update badge
+    const grid = el('grid');
+    if (grid) {
+      const remaining = grid.querySelectorAll('.reel-card').length;
+      el('badgeResults').textContent = remaining;
+    }
+  }, 260);
+}
+
+// Save / unsave a reel
+function vcSave(idx) {
+  const vc = window.VC;
+  if (!vc || !vc.reels[idx]) return;
+  const r = vc.reels[idx];
+  const savedKey = 'vc_saved';
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(savedKey) || '[]'); } catch {}
+
+  const rid = r.id || r.shortCode || r.url || String(idx);
+  const existingIdx = saved.findIndex(s => (s.id || s.shortCode || s.url) === rid || s._vcId === rid);
+
+  const btn = el(`saveBtn${idx}`);
+
+  if (existingIdx >= 0) {
+    // Unsave
+    saved.splice(existingIdx, 1);
+    localStorage.setItem(savedKey, JSON.stringify(saved));
+    if (btn) { btn.textContent = '🔖 Salvar'; btn.style.color = ''; btn.style.borderColor = ''; }
+    toast('🔖 Reel removido dos salvos');
+  } else {
+    // Save — include current analysis if available
+    const reel = { ...r, _vcId: rid, _savedAt: Date.now() };
+    if (vc.analyses[idx]) reel._analysis = vc.analyses[idx];
+    saved.unshift(reel);
+    localStorage.setItem(savedKey, JSON.stringify(saved));
+    if (btn) { btn.textContent = '🔖 Salvo'; btn.style.color = 'var(--accent)'; btn.style.borderColor = 'var(--accent)'; }
+    toast('🔖 Reel salvo!');
+  }
+  updateSavedBadge();
+}
+
+// Check if reel is already saved
+function isSaved(r) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('vc_saved') || '[]');
+    const rid = r.id || r.shortCode || r.url;
+    return saved.some(s => (s.id || s.shortCode || s.url) === rid || s._vcId === rid);
+  } catch { return false; }
+}
+
+// ── Step 1: Analyze video with Gemini ──────────────────────────────
+async function vcAnalyzeVideo(idx) {
+  const vc = window.VC;
+  if (!vc || !vc.reels[idx]) return;
+
+  const analysisDiv = el(`vcanalysis-${idx}`);
+  const analyzeBtn  = el(`analyzeBtn${idx}`);
+  const captionBtn  = el(`captionBtn${idx}`);
+  if (!analysisDiv || !analyzeBtn) return;
+
+  // Toggle if already have description
+  if (vc.descriptions[idx]) {
+    const isVisible = analysisDiv.style.display !== 'none';
+    analysisDiv.style.display = isVisible ? 'none' : 'block';
+    analyzeBtn.innerHTML = isVisible ? '🎬 Analisar' : '🎬 Ocultar';
+    return;
+  }
+
+  analyzeBtn.disabled = true;
+  analyzeBtn.innerHTML = '<span class="spin"></span>Analisando…';
+  analysisDiv.style.display = 'block';
+
+  async function runGemini(model, label) {
+    analysisDiv.innerHTML = `<div class="analyzing-row" style="gap:6px;padding:8px 0">
+      <div class="pulse-dot"></div> ${label}…
+    </div>`;
+    return await analyzeGemini(vc.cfg.geminiKey, vc.reels[idx], vc.brand, [], vc.cfg, model);
+  }
+
+  // runGeminiTextOnly: força modo metadados (sem URL de vídeo) clonando o reel sem videoUrl
+  async function runGeminiTextOnly(model, label) {
+    analysisDiv.innerHTML = `<div class="analyzing-row" style="gap:6px;padding:8px 0">
+      <div class="pulse-dot"></div> ${label}…
+    </div>`;
+    const reelNoVideo = { ...vc.reels[id
