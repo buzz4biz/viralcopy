@@ -2125,4 +2125,337 @@ async function vcAnalyzeVideo(idx) {
     analysisDiv.innerHTML = `<div class="analyzing-row" style="gap:6px;padding:8px 0">
       <div class="pulse-dot"></div> ${label}…
     </div>`;
-    const reelNoVideo = { ...vc.reels[id
+    const reelNoVideo = { ...vc.reels[idx], videoUrl: null, video_url: null, videoSrc: null };
+    return await analyzeGemini(vc.cfg.geminiKey, reelNoVideo, vc.brand, [], vc.cfg, model);
+  }
+
+  let result, firstError = null;
+  try {
+    result = await runGemini('gemini-2.5-flash', 'Gemini 2.5 Flash analisando o vídeo');
+  } catch (e) {
+    firstError = e;
+    const isVideoBlocked = /URL expirada|bloqueada|não conseguiu acessar/i.test(e.message);
+    if (isVideoBlocked) {
+      analysisDiv.innerHTML = `<div class="analyzing-row" style="gap:6px;padding:8px 0">
+        <div class="pulse-dot"></div> Vídeo inacessível — analisando via metadados…
+      </div>`;
+      try {
+        result = await runGeminiTextOnly('gemini-2.5-flash', 'Analisando via metadados');
+      } catch (metaErr) {
+        const msg = metaErr.message.replace(/^RETRYABLE_\d+:\s*/, '') || 'Erro desconhecido';
+        analysisDiv.innerHTML = `<div class="status show error" style="margin:0">⚠️ ${esc(msg)}</div>`;
+        analyzeBtn.innerHTML = '🎬 Analisar';
+        analyzeBtn.disabled = false;
+        return;
+      }
+    } else if (!e.message?.startsWith('RETRYABLE_')) {
+      analysisDiv.innerHTML = `<div class="status show error" style="margin:0">⚠️ ${esc(e.message)}</div>`;
+      analyzeBtn.innerHTML = '🎬 Analisar';
+      analyzeBtn.disabled = false;
+      return;
+    } else {
+      const is429 = e.message.startsWith('RETRYABLE_429');
+      const fallbackLabel = is429
+        ? 'Limite Gemini 2.5 Flash atingido (5 req / 15 min). Gerando com Gemini 2.5 Flash Lite'
+        : 'Gemini 2.5 Flash sobrecarregado. Usando Gemini 2.5 Flash Lite';
+      try {
+        result = await runGemini('gemini-2.5-flash-lite', fallbackLabel);
+      } catch (fallbackErr) {
+        const isFallback429 = fallbackErr.message?.startsWith('RETRYABLE_429');
+        const msg = isFallback429
+          ? 'Limite de requisições Gemini atingido. Verifique se sua chave API tem cota disponível em aistudio.google.com.'
+          : (fallbackErr.message.replace(/^RETRYABLE_\d+:\s*/, '') || 'Erro desconhecido');
+        analysisDiv.innerHTML = `<div class="status show error" style="margin:0">⚠️ ${esc(msg)}</div>`;
+        analyzeBtn.innerHTML = '🎬 Analisar';
+        analyzeBtn.disabled = false;
+        return;
+      }
+    }
+  }
+
+  // Store description and show it
+  vc.descriptions[idx] = { description: result.description, mode: result.mode };
+  const modeBadge = MODE_BADGE[result.mode] || MODE_BADGE.text;
+  analysisDiv.innerHTML = `
+    <div style="margin-top:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:.06em;color:var(--muted)">🎬 ANÁLISE DO VÍDEO</div>
+        <span style="font-size:0.72rem;padding:2px 7px;border-radius:20px;border:1px solid ${modeBadge.color};color:${modeBadge.color}">
+          ${modeBadge.icon} ${modeBadge.label}
+        </span>
+      </div>
+      <div style="font-size:0.85rem;line-height:1.6;color:var(--text);white-space:pre-line">${esc(result.description || '—')}</div>
+    </div>`;
+  analyzeBtn.innerHTML = '🎬 Ocultar';
+  analyzeBtn.disabled = false;
+  if (captionBtn) { captionBtn.disabled = false; captionBtn.style.opacity = '1'; }
+}
+
+// ── Step 2: Generate caption ────────────────────────────────────────
+async function vcGenerateCaption(idx) {
+  const vc = window.VC;
+  if (!vc || !vc.reels[idx]) return;
+
+  const analysisDiv = el(`vcanalysis-${idx}`);
+  const captionBtn  = el(`captionBtn${idx}`);
+  const analyzeBtn  = el(`analyzeBtn${idx}`);
+  if (!analysisDiv || !captionBtn) return;
+
+  // Already have caption — toggle visibility
+  if (vc.analyses[idx]) {
+    const isVisible = analysisDiv.style.display !== 'none';
+    analysisDiv.style.display = isVisible ? 'none' : 'block';
+    captionBtn.innerHTML = isVisible ? '✨ Gerar Legenda' : '✨ Ocultar';
+    return;
+  }
+
+  const description = vc.descriptions[idx]?.description || '';
+
+  // Snapshot current content so we can restore on error
+  const _prevHTML    = analysisDiv.innerHTML;
+  const _prevDisplay = analysisDiv.style.display;
+
+  captionBtn.disabled = true;
+  captionBtn.innerHTML = '<span class="spin"></span>Gerando…';
+  analysisDiv.style.display = 'block';
+
+  let cap, hashtags, displayMode;
+  const captionModel = vc.cfg.captionModel || 'gemini-2.5-flash';
+
+  try {
+    if (captionModel === 'deepseek') {
+      if (!vc.cfg.deepseekKey) throw new Error('Chave API DeepSeek não configurada. Adicione em Configurações.');
+      try {
+        const ds = await writeWithDeepSeek(vc.cfg.deepseekKey, description, vc.brand, vc.cfg);
+        cap         = ds.caption;
+        hashtags    = ds.hashtags;
+        displayMode = (vc.descriptions[idx]?.mode || 'video') + ' · DeepSeek';
+      } catch (dsErr) {
+        if (dsErr.message?.startsWith('DEEPSEEK_BALANCE')) {
+          showStatus('⚠️ Saldo DeepSeek insuficiente. Adicione créditos em platform.deepseek.com/top_up — gerando com Gemini...', 'error');
+          setTimeout(clearStatus, 8000);
+          // falls through to Gemini block below
+        } else {
+          throw dsErr;
+        }
+      }
+    }
+
+    if (!cap) {
+      // Gemini — uses saved description, no re-analysis
+      const primaryModel = (captionModel === 'gemini-2.5-flash-lite') ? 'gemini-2.5-flash-lite' : 'gemini-2.5-flash';
+      const runGeminiCaption = async (model, label) => {
+        analysisDiv.innerHTML = `<div class="analyzing-row" style="gap:6px;padding:8px 0">
+          <div class="pulse-dot"></div> ${label}…
+        </div>`;
+        return await writeWithGemini(vc.cfg.geminiKey, description, vc.brand, vc.cfg, model);
+      };
+      let result;
+      try {
+        result = await runGeminiCaption(primaryModel,
+          `${primaryModel === 'gemini-2.5-flash-lite' ? 'Gemini 2.5 Flash Lite' : 'Gemini 2.5 Flash'} gerando legenda`);
+      } catch (e) {
+        if (!e.message?.startsWith('RETRYABLE_') || primaryModel === 'gemini-2.5-flash-lite') throw e;
+        const is429 = e.message.startsWith('RETRYABLE_429');
+        try {
+          result = await runGeminiCaption('gemini-2.5-flash-lite',
+            is429 ? 'Limite Gemini 2.5 Flash atingido. Gerando com Gemini 2.5 Flash Lite'
+                  : 'Gemini 2.5 Flash sobrecarregado. Usando Gemini 2.5 Flash Lite');
+        } catch (liteErr) {
+          const isBoth429 = liteErr.message?.startsWith('RETRYABLE_429');
+          throw new Error(isBoth429
+            ? 'Limite de requisições Gemini atingido. Verifique se sua chave API tem cota disponível em aistudio.google.com.'
+            : (liteErr.message.replace(/^RETRYABLE_\d+:\s*/, '') || 'Erro desconhecido'));
+        }
+      }
+      cap         = result.caption;
+      hashtags    = result.hashtags;
+      displayMode = vc.descriptions[idx]?.mode || 'text';
+    }
+
+  } catch (err) {
+    const msg = err.message.replace(/^RETRYABLE_\d+:\s*/, '') || 'Erro desconhecido';
+    // Restore previous panel content
+    analysisDiv.innerHTML    = _prevHTML;
+    analysisDiv.style.display = _prevDisplay;
+    const hadCaption = !!vc.analyses[idx];
+    captionBtn.innerHTML = hadCaption ? '✨ Ocultar' : '✨ Gerar Legenda';
+    captionBtn.disabled  = false;
+    showStatus(`⚠️ ${msg}`, 'error');
+    setTimeout(clearStatus, 8000);
+    return;
+  }
+
+  vc.analyses[idx] = { description, cap, hashtags, mode: displayMode };
+  analysisDiv.innerHTML = renderAnalysis(description, cap, hashtags, displayMode, idx);
+  captionBtn.innerHTML = '✨ Ocultar';
+  captionBtn.disabled = false;
+  if (analyzeBtn) { analyzeBtn.innerHTML = '🎬 Analisar'; }
+
+  // Sync with saved reels
+  if (isSaved(vc.reels[idx])) {
+    const savedKey = 'vc_saved';
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(savedKey) || '[]'); } catch {}
+    const rid = vc.reels[idx].id || vc.reels[idx].shortCode || vc.reels[idx].url || String(idx);
+    const si = saved.findIndex(s => (s.id || s.shortCode || s.url) === rid || s._vcId === rid);
+    if (si >= 0) { saved[si]._analysis = vc.analyses[idx]; localStorage.setItem(savedKey, JSON.stringify(saved)); }
+  }
+}
+
+// ── Regenerate caption with a different model ────────────────────────
+function vcRegenerateCaption(idx) {
+  const vc = window.VC;
+  if (!vc) return;
+
+  const selectEl = document.getElementById(`regenModel${idx}`);
+  if (selectEl) {
+    vc.cfg.captionModel = selectEl.value;
+    const cfgSelect = document.getElementById('captionModel');
+    if (cfgSelect) cfgSelect.value = selectEl.value;
+    saveConfig();
+  }
+
+  delete vc.analyses[idx];
+
+  const captionBtn = document.getElementById(`captionBtn${idx}`);
+  if (captionBtn) { captionBtn.innerHTML = '✨ Gerar Legenda'; captionBtn.disabled = false; }
+
+  vcGenerateCaption(idx);
+}
+
+// ── Render generated caption panel ──────────────────────────────────
+function renderAnalysis(description, cap, hashtags, displayMode, idx = -1) {
+  const fullText = cap + (hashtags ? '\n\n' + hashtags : '');
+  const url = (idx >= 0 && window.VC?.reels[idx]) ? reelUrl(window.VC.reels[idx]) : '#';
+
+  return `
+  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">
+      ✨ LEGENDA GERADA
+    </div>
+    <div style="font-size:0.85rem;line-height:1.7;color:var(--text);white-space:pre-line;margin-bottom:8px">${esc(cap)}</div>
+    ${hashtags ? `<div style="font-size:0.82rem;color:var(--muted);margin-bottom:10px">${esc(hashtags)}</div>` : ''}
+    <div class="card-actions" style="margin-top:8px">
+      <button class="btn btn-primary btn-sm btn-grow" onclick='copyText(${JSON.stringify(fullText)})'>
+        📋 Copiar Legenda
+      </button>
+      <a class="btn btn-outline btn-sm" href="${url}" target="_blank" rel="noopener">
+        📱 Instagram
+      </a>
+    </div>
+    ${idx >= 0 ? (() => {
+      const curModel = window.VC?.cfg?.captionModel || 'gemini-2.5-flash';
+      return `
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:0.75rem;color:var(--muted);white-space:nowrap">🔄 Regenerar com:</span>
+      <select id="regenModel${idx}"
+              style="font-size:0.78rem;padding:3px 8px;border-radius:6px;border:1px solid var(--border);
+                     background:var(--card);color:var(--text);cursor:pointer">
+        <option value="gemini-2.5-flash"     ${curModel==='gemini-2.5-flash'     ? 'selected':''}>Gemini 2.5 Flash</option>
+        <option value="gemini-2.5-flash-lite" ${curModel==='gemini-2.5-flash-lite'? 'selected':''}>Gemini 2.5 Flash Lite</option>
+        <option value="deepseek"             ${curModel==='deepseek'             ? 'selected':''}>DeepSeek</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="vcRegenerateCaption(${idx})">Regenerar</button>
+    </div>`;
+    })() : ''}
+  </div>`;
+}
+
+// ── Saved badge ──────────────────────────────────────────────────────
+function updateSavedBadge() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('vc_saved') || '[]');
+    const badge = el('badgeSaved');
+    if (badge) {
+      badge.textContent = saved.length;
+      badge.style.background = saved.length > 0 ? 'var(--accent)' : 'var(--muted)';
+    }
+  } catch {}
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────
+function showTab(tab) {
+  const isResults = tab === 'results';
+  el('resultsSection').style.display = isResults ? '' : 'none';
+  el('savedSection').style.display   = isResults ? 'none' : '';
+  el('tabResults').classList.toggle('active', isResults);
+  el('tabSaved').classList.toggle('active', !isResults);
+  if (!isResults) renderSaved();
+  updateSavedBadge();
+}
+
+// ── Render saved reels ────────────────────────────────────────────────
+function renderSaved() {
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem('vc_saved') || '[]'); } catch {}
+
+  const sec = el('savedSection');
+  if (!sec) return;
+
+  if (saved.length === 0) {
+    sec.innerHTML = `<div class="empty">
+      <span class="e-icon">🔖</span>
+      <h3>Nenhum reel salvo</h3>
+      <p>Clique em 🔖 Salvar em qualquer reel para salvá-lo aqui.</p>
+    </div>`;
+    return;
+  }
+
+  sec.innerHTML = `
+    <div class="results-meta">
+      <span>${saved.length} reel${saved.length > 1 ? 's' : ''} salvo${saved.length > 1 ? 's' : ''}</span>
+      <button class="btn btn-ghost" style="font-size:0.78rem;color:var(--muted)"
+              onclick="if(confirm('Apagar todos os reels salvos?')){localStorage.removeItem('vc_saved');renderSaved();updateSavedBadge();}">
+        Limpar tudo
+      </button>
+    </div>
+    <div class="results-grid" id="savedGrid"></div>`;
+
+  const grid = el('savedGrid');
+  saved.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'reel-card';
+
+    const an = r._analysis;
+    if (an) {
+      // Has analysis — show full card
+      card.innerHTML = fullCard(r, an.description, an.cap, an.hashtags, i, an.mode);
+    } else {
+      // No analysis yet
+      const t = thumb(r);
+      const url = reelUrl(r);
+      card.innerHTML = `
+        <div class="thumb-wrap">${t
+          ? `<img src="${t}" alt="Thumbnail" loading="lazy" onerror="this.style.display='none'">`
+          : `<div class="thumb-placeholder">🎬</div>`}
+        </div>
+        <div class="card-body">
+          <div class="card-author"><a href="${url}" target="_blank" rel="noopener">@${esc(username(r))}</a></div>
+          <div class="card-stats">
+            <span>👁 ${fmt(views(r))}</span>
+            <span>❤️ ${fmt(likes(r))}</span>
+          </div>
+          <div class="card-actions" style="margin-top:10px">
+            <a class="btn btn-outline btn-sm" href="${url}" target="_blank" rel="noopener">📱 Ver Reel</a>
+            <button class="btn btn-ghost btn-sm" style="color:var(--muted)"
+                    onclick="vcDeleteSaved(${i})">🗑️</button>
+          </div>
+        </div>`;
+    }
+    grid.appendChild(card);
+  });
+}
+
+function vcDeleteSaved(i) {
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem('vc_saved') || '[]'); } catch {}
+  saved.splice(i, 1);
+  localStorage.setItem('vc_saved', JSON.stringify(saved));
+  renderSaved();
+  updateSavedBadge();
+}
+
+</script>
+</body>
+</html>
